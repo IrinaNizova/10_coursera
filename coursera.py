@@ -22,9 +22,12 @@ def get_course_info(course_slug):
     requests_course_data = requests.get(course_slug)
     soup = BeautifulSoup(requests_course_data.content, 'html.parser')
     course_caption = soup.find('h1').string
-    course_rating = soup.find("div", {"class": "ratings-text bt3-visible-xs"})
-    course_rating = course_rating.string.strip(' stars') if course_rating else ''
-    course_lang = list(soup.find("div", { "class" : "language-info" }).div.children)[1]
+    course_rating = \
+        soup.find("div", {"class": "ratings-text bt3-visible-xs"})
+    course_rating = \
+        course_rating.string.strip(' stars') if course_rating else ''
+    course_lang = \
+        list(soup.find("div", {"class": "language-info"}).div.children)[1]
     course_start_date = soup.find("div", {"class": "startdate"}).span.string
     course_week_count = len(soup.find_all("div", {"class": "week-body"}))
 
@@ -33,7 +36,8 @@ def get_course_info(course_slug):
     logging.info('Stars: {}'.format(course_rating))
     logging.info('Duration: {}'.format(course_week_count))
     logging.info('Start date: {}'.format(course_start_date))
-    return (course_caption, course_lang, course_rating, course_week_count, course_start_date)
+    return (course_caption, course_lang, course_rating,
+            course_week_count, course_start_date)
 
 
 def output_courses_info_to_xlsx(courses_info, filepath_to_save):
