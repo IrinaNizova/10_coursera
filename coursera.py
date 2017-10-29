@@ -36,8 +36,9 @@ def get_course_info(course_slug):
     logging.info('Stars: {}'.format(course_rating))
     logging.info('Duration: {}'.format(course_week_count))
     logging.info('Start date: {}'.format(course_start_date))
-    return (course_caption, course_lang, course_rating,
+    course_data = (course_caption, course_lang, course_rating,
             course_week_count, course_start_date)
+    return course_data
 
 
 def output_courses_info_to_xlsx(courses_info, filepath_to_save):
