@@ -18,10 +18,10 @@ def get_courses_list(count_courses=20):
 def get_course_info(course_url):
 
     requests_course_data = get_course_page_content(course_url)
-    course_attribs = parse_course_content(requests_course_data)
-    print_course_attrs(course_url, *course_attribs)
+    course_attrs = parse_course_content(requests_course_data)
+    print_course_attrs(course_url, **course_attrs)
 
-    return course_attribs
+    return course_attrs
 
 
 def get_course_page_content(course_url):
@@ -29,24 +29,24 @@ def get_course_page_content(course_url):
 
 
 def parse_course_content(requests_course_content):
+
     soup = BeautifulSoup(requests_course_content, 'html.parser')
-    course_caption = soup.find('h1').string
+    course_attrs = dict()
+    course_attrs['course_caption'] = soup.find('h1').string
     course_rating = \
         soup.find("div", {"class": "ratings-text bt3-visible-xs"})
-    course_rating = \
+    course_attrs['course_rating'] = \
         course_rating.string.strip(' stars') if course_rating else ''
-    course_lang = \
+    course_attrs['course_lang'] = \
         list(soup.find("div", {"class": "language-info"}).div.children)[1]
-    course_start_date = soup.find("div", {"class": "startdate"}).span.string
-    course_week_count = str(len(soup.find_all("div", {"class": "week-body"})))
-    course_attribs = (course_caption, course_lang, course_rating,
-        course_week_count, course_start_date)
-    return course_attribs
+    course_attrs['course_start_date'] = soup.find("div", {"class": "startdate"}).span.string
+    course_attrs['course_week_count'] = str(len(soup.find_all("div", {"class": "week-body"})))
+    return course_attrs
 
 
-def print_course_attrs(course_url, *course_attribs):
+def print_course_attrs(course_url, **course_attrs):
 
-    course_caption, course_lang, course_rating, course_week_count, course_start_date = course_attribs
+    course_caption, course_lang, course_rating, course_week_count, course_start_date = course_attrs
     logging.info(course_url)
     logging.info('Caption: {}'.format(course_caption))
     logging.info('Language: {}'.format(course_lang))
@@ -75,6 +75,9 @@ if __name__ == '__main__':
         courses_urls = get_courses_list()
     courses_properties = [('Caption', 'Language', 'Stars', 'Duration', 'Start date')]
     for course_url in courses_urls:
-        courses_properties.append(get_course_info(course_url))
+        course_attrs = get_course_info(course_url)
+        courses_properties.append((course_attrs['course_caption'], course_attrs['course_lang'],
+                                   course_attrs['course_rating'], course_attrs['course_week_count'],
+                                   course_attrs['course_start_date']))
 
     output_courses_info_to_xlsx(courses_properties, script_args.filepath)
