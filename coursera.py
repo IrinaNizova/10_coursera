@@ -19,7 +19,7 @@ def get_course_info(course_url):
 
     requests_course_data = get_course_page_content(course_url)
     course_attrs = parse_course_content(requests_course_data)
-    print_course_attrs(course_url, **course_attrs)
+    log_course_attrs(course_url, **course_attrs)
 
     return course_attrs
 
@@ -44,15 +44,14 @@ def parse_course_content(requests_course_content):
     return course_attrs
 
 
-def print_course_attrs(course_url, **course_attrs):
+def log_course_attrs(course_url, **course_attrs):
 
-    course_caption, course_lang, course_rating, course_week_count, course_start_date = course_attrs
     logging.info(course_url)
-    logging.info('Caption: {}'.format(course_caption))
-    logging.info('Language: {}'.format(course_lang))
-    logging.info('Stars: {}'.format(course_rating))
-    logging.info('Duration: {}'.format(course_week_count))
-    logging.info('Start date: {}'.format(course_start_date))
+    logging.info('Caption: {}'.format(course_attrs['course_caption']))
+    logging.info('Language: {}'.format(course_attrs['course_lang']))
+    logging.info('Stars: {}'.format(course_attrs['course_rating']))
+    logging.info('Duration: {}'.format(course_attrs['course_week_count']))
+    logging.info('Start date: {}'.format(course_attrs['course_start_date']))
 
 
 def output_courses_info_to_xlsx(courses_info, filepath_to_save):
